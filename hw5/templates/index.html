@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <title>HW5 | CSCI4710</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    </head>
+    
+    
+    <body>
+        <h1>Show user data from backend</h1>
+        <!-- <p>{{column_names}}</p>
+        <p>{{data_part}}</p> -->
+          
+        {% for sub_table in data %}
+          <table class="table">
+              <thead>
+                <tr>
+                  {% for item in column_html %}
+                      <th>{{item}}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in sub_table %}
+                    <tr>
+                      {% for data in row %}
+                          <td>{{ data }}</td>
+                      {% endfor %}
+                    </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        {% endfor %}
+    
+    </body>
+</html>

@@ -1,0 +1,28 @@
+Trevor Strobel
+Malcolm Flaherty
+
+CSCI-4710 Final Project Idea
+
+	Our group is interested in implementing an image macro (meme) 
+	generation web application. For clarification, an image macro 
+	is an image with text superimposed on top of it, usually with 
+	a top and bottom row of text. Image macros may also be 
+	comprised of a few images called panels.  Our motivation for 
+	this project stems from a want to more completely understand 
+	how a web application like this would work. We’re familiar 
+	with static web pages, and manipulation of the DOM tree with 
+	JavaScript, but building this application would allow us to 
+	further investigate how information is handled within a web 
+	application, as well as how image manipulation could be 
+	handled within the same application.
+
+	Our planned application would provide a web space where users
+	could select and modify templates or upload and modify new
+	images.  Users would also be able to insert text within our
+	user interface and select where they’d like the text to 
+	appear. In that way,  our web application would rid the 
+	user of the need to install and learn to use image editing
+	software as well as the need to find original copies of
+	popular meme images.  The application would also allow 
+	the user to download the image to their local storage device. 
+
