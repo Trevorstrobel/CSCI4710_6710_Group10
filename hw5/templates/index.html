@@ -11,6 +11,12 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script src="https://d3js.org/d3.v4.js"></script>
+        <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+        <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
+        <script src="https://datamaps.github.io/scripts/datamaps.world.min.js"></script>
     </head>
     
     
@@ -19,26 +25,49 @@
         <!-- <p>{{column_names}}</p>
         <p>{{data_part}}</p> -->
           
-        {% for sub_table in data %}
-          <table class="table">
-              <thead>
-                <tr>
-                  {% for item in column_html %}
-                      <th>{{item}}</th>
+          <h2>Grouped Survey Data</h2>
+          {% for sub_table in subGroups %}
+            <table class="table">
+                <thead>
+                  <tr>
+                    {% for item in column_html %}
+                        <th>{{item}}</th>
+                    {% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for row in sub_table %}
+                      <tr>
+                        {% for data in row %}
+                            <td>{{ data }}</td>
+                        {% endfor %}
+                      </tr>
                   {% endfor %}
-                </tr>
-              </thead>
-              <tbody>
-                {% for row in sub_table %}
-                    <tr>
-                      {% for data in row %}
-                          <td>{{ data }}</td>
-                      {% endfor %}
-                    </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-        {% endfor %}
+                </tbody>
+              </table>
+            {% endfor %}
     
+        <div id="container" style="position: relative; width: 900px; height: 600px;"></div>
+        <script>
+            var map = new Datamap({
+                element: document.getElementById('container'),
+                fills: {
+                    WITH_SURVEY_DATA: 'blue',
+                    defaultFill: 'gray'
+                },
+                data: {
+                    // all other country code is at: https://gist.github.com/rendon/fc9d5b02a724979e878e
+                    CHN: {
+                        fillKey: 'WITH_SURVEY_DATA'
+                    },
+                    USA: {
+                        fillKey: 'WITH_SURVEY_DATA'
+                    }
+                }
+            });
+
+            // Draw a legend for this map
+            map.legend();
+        </script>
     </body>
 </html>

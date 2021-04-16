@@ -19,8 +19,6 @@ SQL_TABLE_CREATE = "CREATE TABLE not_alone (	Index INT ,	Country VARCHAR(20) ,	A
 
 column_names = ["index","What country do you live in?","How old are you?","What is your gender?","To what extent do you feel FEAR due to the coronavirus?","To what extent do you feel ANXIOUS due to the coronavirus?","To what extent do you feel ANGRY due to the coronavirus?","To what extent do you feel HAPPY due to the coronavirus?","To what extent do you feel SAD due to the coronavirus?","Which emotion is having the biggest impact on you?","What makes you feel that way?","What brings you the most meaning during the coronavirus outbreak?","What is your occupation?"]
 
-
-
 #database connection
 def connect():
     c = psycopg2.connect(connInfo)
@@ -127,9 +125,65 @@ def getGroup(groupNum, country = ""):
 
 @app.route('/')
 def index():
-    #how is the user supposed to select a group? This assignment makes no sense. 
-    data = getGroup(1, 'USA')
-    return render_template('index.html', data = data, column_html = column_names)
+    conn = connect()
+    cur = conn.cursor()
+    
+    COUNTRIES = "SELECT DISTINCT country FROM not_alone";
+    subGroups = []
+
+    #Split data into 4 groups based on age and gender
+    #group 1
+    GROUP_1 = Template("SELECT * FROM not_alone WHERE age <= 35 AND gender = 'Male'") 
+
+    GROUP_1 = GROUP_1.substitute()
+    GROUP_1 = GROUP_1 + ";"
+
+    cur.execute(GROUP_1)
+    group1 = cur.fetchall()
+
+    #group 2
+    GROUP_2 = Template("SELECT * FROM not_alone WHERE age >= 36 AND gender = 'Male'") 
+
+    GROUP_2 = GROUP_2.substitute()
+    GROUP_2 = GROUP_2 + ";"
+
+    cur.execute(GROUP_2)
+    group2 = cur.fetchall()
+
+    #group 3
+    GROUP_3 = Template("SELECT * FROM not_alone WHERE age <= 35 AND gender = 'Female'") 
+
+    GROUP_3 = GROUP_3.substitute()
+    GROUP_3 = GROUP_3 + ";"
+
+    cur.execute(GROUP_3)
+    group3 = cur.fetchall()
+
+    #group 4
+    GROUP_4 = Template("SELECT * FROM not_alone WHERE age >= 36 AND gender = 'Female'") 
+
+    GROUP_4 = GROUP_4.substitute()
+    GROUP_4 = GROUP_4 + ";"
+
+    cur.execute(GROUP_4)
+    group4 = cur.fetchall()
+    
+    #split each group into smaller groups based on country and size
+    for x in range(1,4):
+        for row in COUNTRIES:
+            #Getting a "relation GROUP_1 does not exist" error here... not sure why
+            group = "GROUP_" + str(x)
+            TEMP = "SELECT * FROM " + group + " WHERE country = '$country';"
+
+            #TODO: check if current country has more than 10 entries and split using kmeans functions if it does.
+
+            cur.execute(TEMP)
+            subGroup = cur.fetchall()
+            subGroups.append(subGroup)
+
+
+    #pass groups to index.html
+    return render_template('index.html', subGroups = subGroups, column_html = column_names)
 
 # default page for 404 error
 @app.errorhandler(404)
@@ -145,7 +199,7 @@ def server_error(e):
 @app.route('/test_500')
 def fake_function():
 	'''
-	Need to test this wehn debug mode is off
+	Need to test this when debug mode is off
 	'''
 	a = v * 5
 	return a
