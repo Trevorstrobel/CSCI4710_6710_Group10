@@ -128,57 +128,46 @@ def index():
     conn = connect()
     cur = conn.cursor()
     
-    COUNTRIES = "SELECT DISTINCT country FROM not_alone";
+    COUNTRIES = "SELECT DISTINCT country FROM not_alone;"
+    cur.execute(COUNTRIES)
+    countries = cur.fetchall()
+
     subGroups = []
 
     #Split data into 4 groups based on age and gender
     #group 1
-    GROUP_1 = Template("SELECT * FROM not_alone WHERE age <= 35 AND gender = 'Male'") 
-
-    GROUP_1 = GROUP_1.substitute()
-    GROUP_1 = GROUP_1 + ";"
-
+    GROUP_1 = "CREATE TABLE group_1 AS (SELECT * FROM not_alone WHERE age <= 35 AND gender = 'Male');"
+    
     cur.execute(GROUP_1)
-    group1 = cur.fetchall()
 
     #group 2
-    GROUP_2 = Template("SELECT * FROM not_alone WHERE age >= 36 AND gender = 'Male'") 
-
-    GROUP_2 = GROUP_2.substitute()
-    GROUP_2 = GROUP_2 + ";"
+    GROUP_2 = "CREATE TABLE group_2 AS (SELECT * FROM not_alone WHERE age >= 36 AND gender = 'Male');"
 
     cur.execute(GROUP_2)
-    group2 = cur.fetchall()
 
     #group 3
-    GROUP_3 = Template("SELECT * FROM not_alone WHERE age <= 35 AND gender = 'Female'") 
-
-    GROUP_3 = GROUP_3.substitute()
-    GROUP_3 = GROUP_3 + ";"
+    GROUP_3 = "CREATE TABLE group_3 AS (SELECT * FROM not_alone WHERE age <= 35 AND gender = 'Female');"
 
     cur.execute(GROUP_3)
-    group3 = cur.fetchall()
 
     #group 4
-    GROUP_4 = Template("SELECT * FROM not_alone WHERE age >= 36 AND gender = 'Female'") 
-
-    GROUP_4 = GROUP_4.substitute()
-    GROUP_4 = GROUP_4 + ";"
+    GROUP_4 = "CREATE TABLE group_4 AS (SELECT * FROM not_alone WHERE age >= 36 AND gender = 'Female');"
 
     cur.execute(GROUP_4)
-    group4 = cur.fetchall()
     
     #split each group into smaller groups based on country and size
-    for x in range(1,4):
-        for row in COUNTRIES:
-            #Getting a "relation GROUP_1 does not exist" error here... not sure why
+    for x in range(1,5):
+        for row in countries:
             group = "GROUP_" + str(x)
-            TEMP = "SELECT * FROM " + group + " WHERE country = '$country';"
+            country = row[0]
+            TEMP = "SELECT * FROM " + group + " WHERE country = '" + country + "';"
 
             #TODO: check if current country has more than 10 entries and split using kmeans functions if it does.
 
             cur.execute(TEMP)
             subGroup = cur.fetchall()
+            
+            #add current group to array
             subGroups.append(subGroup)
 
 
