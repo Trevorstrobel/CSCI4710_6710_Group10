@@ -56,73 +56,6 @@ def createTable():
     conn.commit()
     conn.close()
 
-
-
-#This route returns all unique countries in the DB.
-@app.route('/getCountries')
-def getCountries():
-    conn = connect()
-    cur = conn.cursor()
-
-    SQL_QUERY = "SELECT DISTINCT country FROM not_alone;"
-
-    cur.execute(SQL_QUERY)
-    return cur.fetchall()
-
-#this one route is able to take care of all needed requests. 
-# specify the group number and optionally, a country. 
-@app.route('/getGroup/<int:groupNum>/<string:country>')
-def getGroup(groupNum, country = ""):
-    conn = connect()
-    cur = conn.cursor()
-    
-    #chooses the correct variables for SQL query
-    
-    age = None
-    gender = None
-    opsList = [">= 36", "<= 35", "Male", "Female"]
-
-    if(groupNum % 2 == 0):
-        age = opsList[0]
-    else:
-        age = opsList[1]
-
-    if(groupNum < 3 ):
-        gender = opsList[2]
-    else:
-        gender = opsList[3]
-
-    SQL_QUERY = Template("SELECT * FROM not_alone WHERE age $age AND gender = '$gender'")
-    
-
-    SQL_QUERY = SQL_QUERY.substitute(age = age, gender = gender)
-
-    #if country is specified, add that qualifier to the string
-    if (country != ""):
-        countryStr = Template(" AND country LIKE '$country'")
-        SQL_QUERY = SQL_QUERY + countryStr.substitute(country = country)
-
-    #add the line terminator
-    SQL_QUERY = SQL_QUERY + ";"
-
-    #execute and return the query results
-    cur.execute(SQL_QUERY)
-    data = cur.fetchall()
-    
-    #if data returned is greater than 10 entries, split it into 3 groups using the 
-    # functions from util
-    if(len(data) > 10):
-        labels = util.cluster_user_data(data)
-        
-        data = util.split_user_data(data, labels)
-        
-    return data
-
-
-
-        
-        
-
 @app.route('/')
 def index():
     conn = connect()
@@ -158,21 +91,37 @@ def index():
     #split each group into smaller groups based on country and size
     for x in range(1,5):
         for row in countries:
+            #drop TEMP table from pervious loop cycle
+            cur.execute("DROP TABLE IF EXISTS TEMP;")
+
+            #create table to store current subgroup in
             group = "GROUP_" + str(x)
             country = row[0]
-            TEMP = "SELECT * FROM " + group + " WHERE country = '" + country + "';"
-
-            #TODO: check if current country has more than 10 entries and split using kmeans functions if it does.
-
+            TEMP = "CREATE TABLE TEMP AS (SELECT * FROM " + group + " WHERE country = '" + country + "');"
+            TEMPROWS = "SELECT * FROM TEMP;"
             cur.execute(TEMP)
-            subGroup = cur.fetchall()
-            
-            #add current group to array
-            subGroups.append(subGroup)
 
+            #get number of rows in table, to make sure subgroup is not empty
+            cur.execute("SELECT COUNT(*) FROM TEMP;")
+            rowCount = cur.fetchone()[0]
+
+            #check if subgroup is empty
+            if rowCount > 0:
+                #if current country has more than 10 entries, split using kmeans
+                cur.execute(TEMPROWS)
+                subGroup = cur.fetchall()
+                if rowCount >= 10:
+                    labels = util.cluster_user_data(subGroup)
+        
+                    splitGroup = util.split_user_data(subGroup, labels)
+
+                    for y in splitGroup:
+                         subGroups.append(y)
+                else:
+                    subGroups.append(subGroup)
 
     #pass groups to index.html
-    return render_template('index.html', subGroups = subGroups, column_html = column_names)
+    return render_template('index.html', subGroups = subGroups, countries = countries, column_html = column_names)
 
 # default page for 404 error
 @app.errorhandler(404)
