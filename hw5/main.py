@@ -1,4 +1,4 @@
-# Author:           Trevor Strobel
+# Authors:          Trevor Strobel, Malcolm Flaherty
 # Date:             4/9/2021
 # Assn:             Hw 5
 

@@ -24,6 +24,8 @@
         <h1>User Survey Data World Map</h1>
         <div id="container" style="position: relative; width: 900px; height: 600px;"></div>
         <script>
+            var w = 1500;
+            var h = 1000;
             var map = new Datamap({
                 element: document.getElementById('container'),
                 fills: {
@@ -49,11 +51,131 @@
                     IRL: { fillKey: 'WITH_SURVEY_DATA'},
                     NZL: { fillKey: 'WITH_SURVEY_DATA'},
                     ESP: { fillKey: 'WITH_SURVEY_DATA'}
+                },
+
+                //Started creation of ontology graph here, but wasn't able to finish in time.
+                done: function(datamap) {
+                    datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+                        if (geography.properties.name = 'United States of America') {
+                            var dataset = {
+                                nodes:[
+                                    {name: "Young, Male, Kmeans Cluster 1"}
+                                ],
+                                edges:[]
+                            };
+
+                            // Constructs a new force-directed layout, used for graph a lot
+                            var force = d3.layout.force()
+                                            // the nodes of a graph
+                                            .nodes(dataset.nodes)
+                                            // the edges of a graph
+                                            .links(dataset.edges)
+                                            // the size of the graph 
+                                            .size([w, h])
+                                            .linkDistance([200])
+                                            // the strength of the force
+                                            .charge([-1200])
+                                            // start the force
+                                            // The force layout runs asynchronously. That is, when you call force.start()
+                                            .start();
+
+                                // ten default colors from d3
+                                // example: http://bl.ocks.org/aaizemberg/78bd3dade9593896a59d
+                                var colors = d3.scale.category10();
+
+                                // create a svg element
+                                var svg = d3.select("body")
+                                        .append("svg")
+                                        .attr("width", w)
+                                        .attr("height", h);
+
+                                // dynamically create graph edges
+                                var edges = svg.selectAll("line")
+                                        .data(dataset.edges)
+                                        // .enter() creates the initial join of data to elements
+                                        // this can be very complex, please use it here for now
+                                        // later we may introduce these type of functions
+                                        .enter()
+                                        .append("line")
+                                        // line color
+                                        .style("stroke", "#ccc")
+                                        // line width
+                                        .style("stroke-width", 1);
+
+                                // dynamically create graph nodes
+                                var nodes = svg.selectAll("circle")
+                                        .data(dataset.nodes)
+                                        .enter()
+                                        // circle shape
+                                        .append("circle")
+                                        // radius is 10
+                                        .attr("r", 10)
+                                        // fill colors, this is defined by using category10();
+                                        .style("fill", function(d, i){
+                                        return colors(i);
+                                        })
+                                        // allow users to drag nodes
+                                        .call(force.drag);
+                                
+                                // dynamically create labels
+                                var label = svg.selectAll(".mytext")
+                                        .data(dataset.nodes)
+                                        .enter()
+                                        .append("text")
+                                        .text(function (d) { return d.name; })
+                                        // where we want to render the label, start | middle | end
+                                        .style("text-anchor", "middle")
+                                        // color
+                                        .style("fill", "#555")
+                                        .style("font-family", "Arial")
+                                        .style("font-size", 12);
+                                
+                                
+                                // read this: https://stackoverflow.com/questions/28745398/why-do-we-need-force-ontick-in-d3
+                                // The tick handler is the function that enables you to get the state of the layout when it has changed 
+                                // (the simulation has advanced by a tick) and act on it -- in particular, 
+                                // redraw the nodes and links where they currently are in the simulation.
+                                force.on("tick", function(){
+                                edges.attr("x1", function(d){ return d.source.x; })
+                                    .attr("y1", function(d){ return d.source.y; })
+                                    .attr("x2", function(d){ return d.target.x; })
+                                    .attr("y2", function(d){ return d.target.y; });
+                                nodes.attr("cx", function(d){ return d.x; })
+                                    .attr("cy", function(d){ return d.y; });
+                                label.attr("x", function(d){ return d.x; })
+                                    .attr("y", function (d) {return d.y - 10; });   
+                                });
+                        }
+                    });
                 }
             });
 
             // Draw a legend for this map
             map.legend();
         </script>
+
+        <h1>Survey Data Tables</h1>
+        <!--For the sake of having all of the data visualized despite not completing part 2,
+            printed out all of the data as tables as described in part 1.-->
+        <table class="table">
+            {% for sub_table in subGroups %}
+            <thead>
+            <tr>
+                {% for item in column_html %}
+                    <th>{{item}}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in sub_table %}
+                <tr>
+                    {% for data in row %}
+                        <td>{{ data }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+            {% endfor %}
+        </table>
     </body>
 </html>
