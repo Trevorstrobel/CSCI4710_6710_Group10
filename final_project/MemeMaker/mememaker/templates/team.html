@@ -1,0 +1,55 @@
+<!--
+Author:                Trevor Strobel
+Date:                  4/22/21
+-->
+{% extends "layout.html" %}
+{% block content %}
+
+<div class = "container" style= "margin-top: 10%;">
+    <div class="row">
+        <div class = "col">
+            <div class="centered">
+                <img src="{{ url_for('static', filename='trev_headshot.png') }}" alt="Trevor's Headshot" width="223" height="300" class="photo rounded-circle border">
+            </div>
+            <div class="body-content rounded">
+                <h2>Hey, I'm Trevor</h2>
+                <p class = "">I'm a senior at East Carolina University. I expect to graduate in May with a B.S. in Computer Science.
+                    I grew up in a suburb of Philadelphia, Pennsylvania riding bikes and playing in the woods, as any kid does.
+                    I moved to North Carolina before high school.  There I learned to surf and resent humidity.  As an adult I moved
+                    back to Pennsylvania to catch up with old friends and reconnect with the city.
+                </p>
+                <p>
+                    I got interested in computer science and programming when I was working as a store manager at a computer 
+                    sales and repair shop near Philadelphia, PA.  I took some programming courses at the local community 
+                    college and fell in love.  I returned to North Carolina a year or so later to pursue my degree at East Carolina University. 
+                    As I said earlier, I plan to graduate this spring and hopefully continue my studies in ECU's graduate C.S. program.
+                    
+                </p>
+            </div>
+        </div> <!--end col 1-->
+
+        <div class = "col">
+            <div class="centered">
+                <img src="{{ url_for('static', filename='malcolm_headshot.jpg') }}" alt="Malcolm's Headshot" width="223" height="300" class="photo rounded-circle border">
+            </div>
+            <div class="body-content rounded">
+                <h2>And I'm Malcolm</h2>
+                <p class = "">Hey, I'm Malcolm Flaherty. I am a CSCI Undergrad completing my senior year, planning on pursuing a masters in CSCI at ECU.
+                            Originally from a small town called Winthrop near Boston, MA.
+                </p>
+                <p>
+                    I want to be a video game developer upon completion of my degree, I've wanted to create games since I was little. 
+                    Having an education in CSCI will give and has given me so much experience with many different languages and other practices
+                    that will help me get a job with a video game development team.
+                    
+                </p>
+                <p>
+                    Im taking Web Apps because the topic caught my interest and it's something I have very little knowledge of, 
+                    so I'm looking forward to learning about it.
+                </p>
+            </div>
+        </div> <!--end col 2-->
+    </div>
+</div>
+
+{% endblock content %}
