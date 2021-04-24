@@ -18,17 +18,17 @@ Date:                  4/22/21
             <h1>Make Your Meme</h1>
         </div>
        
+        <div class="row">
+            {% for img in img_html %} <!--For every template entry in the db, make a button-->
+            <div class = "col-sm" style="padding: 2vh;">
+                <a class="btn " href="{{ url_for('makeMeme', img_id=img.id) }}" role="button">
+                    <img src="{{img.imageFile}}"  alt="{{img.imageName}}" width="100" height="100">
+                </a>
 
-        {% for img in img_html %} <!--For every template entry in the db, make a button-->
-        <div class = "container" style="padding: 2vh;">
-            <a class="btn " href="{{ url_for('makeMeme', img_id=img.id) }}" role="button">
-                <img src="{{img.imageFile}}"  alt="{{img.imageName}}" width="100" height="100">
-            </a>
-
-            
+                
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-        
         <script>
             function showImage(imageId) {
                 document.getElementById(imageId).style.display = "block"
