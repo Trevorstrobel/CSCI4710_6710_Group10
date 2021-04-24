@@ -6,7 +6,7 @@ import glob
 import os
 import base64
 from mememaker import db
-from mememaker.models import Image
+from mememaker.models import Img
 
 
 def importImages():
@@ -18,8 +18,9 @@ def importImages():
             imageFile = base64.b64encode(img_file.read())
             filename = filename[16:-4]
             imageFile = 'data:image/png;base64,' + str(imageFile.decode('utf-8'))
-            img = Image(imageName=filename, imageFile = imageFile)
+            img = Img(imageName=filename, imageFile = imageFile)
             db.session.add(img)
+            
 
     db.session.commit()
 
