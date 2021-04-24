@@ -1,10 +1,28 @@
 <!--
-Author:                Trevor Strobel
+Author:                Trevor Strobel, Malcolm Flaherty
 Date:                  4/22/21
 -->
 {% extends "layout.html" %}
 {% block content %}
 
+<head>
+    <style>
+    div {text-align: center;}
+    </style>
+</head>
 
+<div class = "container" style= "margin-top: 10%;">
+        <div class="centered">
+            <h1>Welcome to MemeMaker!</h1>
+            <p class = "">Looking to express your creativity? Want an easy way to bring your ideas into reality? Trying to show your
+                friends just how hilarious you are? This is the place for you! Using MemeMaker you can create memes in moments. Let's
+                get started!
+            </p>
+            <button>
+                <a class="nav-item nav-link" href="{{ url_for('makeMeme') }}">Make Your Meme!</a>
+            </button>
+
+        </div>
+</div>
 
 {% endblock content %}
